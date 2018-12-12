@@ -30,8 +30,7 @@ def read_head_block_num():
     fp.close()
     return res.strip()
 
-def main():
-  # get error_msg
+def check_node_sync_status():
   error_msg = ""
   for i in xrange(15):
     try:
@@ -55,13 +54,20 @@ def main():
       print i, error_msg
       time.sleep(10)
       continue
+  return error_msg
+
+def main():
+  # get error_msg
+  error_msg = check_node_sync_status()
+  if (len(error_msg)) > 0:
+    os.system('/root/opt/eos/start.sh')
+  error_msg = check_node_sync_status()
 
   # send error_msg
   if len(error_msg) > 0:
     notify_url = WECHAT_NOTIFY_URL % (urllib.quote(error_msg))
     print notify_url
     download(notify_url)
-    os.system('/root/opt/eos/start.sh')
 
 if __name__ == "__main__":
   main()
