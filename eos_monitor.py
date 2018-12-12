@@ -40,18 +40,16 @@ def check_node_sync_status():
       head_block_time = js['head_block_time']
 
       old_head_block_num = read_head_block_num()
-      print old_head_block_num
-      print head_block_num
 
       if int(head_block_num) == int(old_head_block_num):
         error_msg = "%s %d %s" % (WARNING_MSG, int(head_block_num), str(head_block_time))
+        time.sleep(10)
       else:
         write_head_block_num(str(head_block_num))
-      error_msg = ""
-      break
+        error_msg = ""
+        break
     except Exception as e:
       error_msg = NO_RESULT_MSG + str(e)
-      print i, error_msg
       time.sleep(10)
       continue
   return error_msg
@@ -60,14 +58,16 @@ def main():
   # get error_msg
   error_msg = check_node_sync_status()
   if (len(error_msg)) > 0:
+    print "restart eos node ..."
     os.system('/root/opt/eos/start.sh')
-  error_msg = check_node_sync_status()
+    error_msg = check_node_sync_status()
 
   # send error_msg
   if len(error_msg) > 0:
     notify_url = WECHAT_NOTIFY_URL % (urllib.quote(error_msg))
-    print notify_url
+    #print notify_url
     download(notify_url)
 
 if __name__ == "__main__":
   main()
+
