@@ -1,1 +1,1 @@
-eos node monitor
+wallet node monitor
